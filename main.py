@@ -590,9 +590,6 @@ world=World()
 player, health_bar = world.process_data(world_data)
 
 
-win_cooldown=50
-
-#temp - 
 
 
 
@@ -663,7 +660,7 @@ while run:
 				screen.fill('black')
 				screen.blit(debug_surf,debug_rect)
 				screen.blit(conti_text,debug_rect2)
-				win_cooldown-=1
+				
 				
 				
 			else:
@@ -712,7 +709,7 @@ while run:
 		if event.type == pygame.KEYDOWN:
 			if level_complete :
 				level_complete=False
-				win_cooldown=50
+				
 				start_game=False
 				bg_scroll = 0
 				world_data=reset_level()
