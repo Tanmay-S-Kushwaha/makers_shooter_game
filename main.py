@@ -602,7 +602,7 @@ while run:
 
 	if start_game == False:
 		#menu
-		screen.fill(BG)
+		draw_bg()
 		if start_button.draw(screen):
 			start_game = True
 		if exit_button.draw(screen):
@@ -657,7 +657,7 @@ while run:
 				debug_rect = debug_surf.get_rect(center= (SCREEN_WIDTH//2,SCREEN_HEIGHT//2))
 				debug_rect2 = conti_text.get_rect(center= (SCREEN_WIDTH//2,SCREEN_HEIGHT//2+100))
 					
-				screen.fill('black')
+				draw_bg()
 				screen.blit(debug_surf,debug_rect)
 				screen.blit(conti_text,debug_rect2)
 				
