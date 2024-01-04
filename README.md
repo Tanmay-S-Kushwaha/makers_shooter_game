@@ -1,5 +1,5 @@
 # makers_shooter_game
-controls:
-W,A,D keys for movement
-Q for grenade
+controls:<br>
+W,A,D keys for movement<br>
+Q for grenade<br>
 SPACEBAR for FIRE
