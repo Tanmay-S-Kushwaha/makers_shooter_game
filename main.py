@@ -58,7 +58,7 @@ sky_img = pygame.image.load('img/background/sky_cloud.png').convert_alpha()
 #button
 start_img = pygame.image.load('img/start_btn.png').convert_alpha()
 exit_img = pygame.image.load('img/exit_btn.png').convert_alpha()
-restart_img = pygame.image.load('img/exit_btn.png').convert_alpha()
+restart_img = pygame.image.load('img/restart_btn.png').convert_alpha()
 #tiles
 img_list=[]
 for x in range(TILE_TYPES):
