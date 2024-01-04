@@ -375,7 +375,7 @@ class World():
 						item_box_group.add(item_box)
 					elif tile==20:
 						exit=Exit(img,x*TILE_SIZE,y*TILE_SIZE)
-						exit_group.add(decoration) #exit
+						exit_group.add(exit) #exit
 		return player, health_bar
 	def draw(self):
 		for tile in self.obstacle_list:
