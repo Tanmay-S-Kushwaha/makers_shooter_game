@@ -114,6 +114,7 @@ def reset_level():
 	exit_group.empty()
 		
 	water_group.empty()
+	enemy_group.empty()
 	#create empty tile list
 	data = []
 
@@ -234,7 +235,7 @@ class Soldier(pygame.sprite.Sprite):
 					self.health=0	
 		#going off the screen
 					if self.char_type=='player':
-						if self.rect.left+dx<0 or self.right +dx> SCREEN_WIDTH:
+						if self.rect.left+dx<0 or self.rect.right +dx> SCREEN_WIDTH:
 							dx=0
 		#update rectangle position
 		self.rect.x += dx
@@ -589,14 +590,14 @@ world=World()
 player, health_bar = world.process_data(world_data)
 
 
-
+win_cooldown=50
 
 #temp - 
 
 
 
 
-
+level_complete=False
 run = True
 while run:
 
@@ -650,46 +651,44 @@ while run:
 
 		#update player actions
 		if player.alive:
-			#shoot bullets
-			if shoot:
-				player.shoot()
-			elif grenade and grenade_thrown == False and player.grenades>0:
-				grenade = Grenade(player.rect.centerx + (0.5 * player.rect.size[0]*player.direction),\
-						player.rect.top, player.direction)
-				grenade_group.add(grenade)
-				grenade_thrown=True
-				player.grenades-=1
-			if player.in_air:
-				player.update_action(2)#2: jump
-			elif moving_left or moving_right:
-				player.update_action(1)#1: run
-			else:
-				player.update_action(0)#0: idle
-			screen_scroll, level_complete=player.move(moving_left, moving_right)
-			bg_scroll -=screen_scroll
 			#check for complate
 			if level_complete:
-				level+=1
-				bg_scroll=0
-				world_data = reset_level()
-				if level <=MAX_LEVELS:
-					with open(f'level{level}_data.csv',newline='') as csvfile:
-						reader = csv.reader(csvfile,delimiter=',')
-						for x,row in enumerate(reader):
-							for y,tile in enumerate(row):
-								world_data[x][y] = int(tile)
-				else:
-					debug_surf = font.render('YOU WON',True,'White')
-					debug_rect = debug_surf.get_rect(topleft = (x,y))
-					pygame.draw.rect(screen,'white',debug_rect)
+				font1= pygame.font.SysFont('Futura',100)
+				font2=pygame.font.SysFont('Futura',30)
+				debug_surf = font1.render('YOU WON',True,'White')
+				conti_text=font2.render('PRESS ANY KEY TO GO TO MAIN MENU..',True,'White')
+				debug_rect = debug_surf.get_rect(center= (SCREEN_WIDTH//2,SCREEN_HEIGHT//2))
+				debug_rect2 = conti_text.get_rect(center= (SCREEN_WIDTH//2,SCREEN_HEIGHT//2+100))
 					
-					screen.fill('black')
-					screen.blit(debug_surf,debug_rect)
+				screen.fill('black')
+				screen.blit(debug_surf,debug_rect)
+				screen.blit(conti_text,debug_rect2)
+				win_cooldown-=1
+				
+				
+			else:
+				#shoot bullets
+				if shoot:
+					player.shoot()
+				elif grenade and grenade_thrown == False and player.grenades>0:
+					grenade = Grenade(player.rect.centerx + (0.5 * player.rect.size[0]*player.direction),\
+							player.rect.top, player.direction)
+					grenade_group.add(grenade)
+					grenade_thrown=True
+					player.grenades-=1
+				if player.in_air:
+					player.update_action(2)#2: jump
+				elif moving_left or moving_right:
+					player.update_action(1)#1: run
+				else:
+					player.update_action(0)#0: idle
+				screen_scroll, level_complete=player.move(moving_left, moving_right)
+				bg_scroll -=screen_scroll
+			
+
+				
 
 
-
-					world=World()
-					player, health_bar = world.process_data(world_data)
 		else:
 			screen_scroll  = 0
 			if restart_button.draw(screen):
@@ -711,19 +710,35 @@ while run:
 			run = False
 		#keyboard presses
 		if event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_a:
-				moving_left = True
-			if event.key == pygame.K_d:
-				moving_right = True
-			if event.key == pygame.K_SPACE:
-				shoot = True
-			if event.key == pygame.K_q:
-				grenade = True
-			if event.key == pygame.K_w and player.alive:
-				player.jump = True
-				jump_fx.play()
-			if event.key == pygame.K_ESCAPE:
-				run = False
+			if level_complete :
+				level_complete=False
+				win_cooldown=50
+				start_game=False
+				bg_scroll = 0
+				world_data=reset_level()
+				with open(f'level{level}_data.csv',newline='') as csvfile:
+					reader = csv.reader(csvfile,delimiter=',')
+					for x,row in enumerate(reader):
+						for y,tile in enumerate(row):
+							world_data[x][y] = int(tile)
+
+					world=World()
+					player, health_bar = world.process_data(world_data)
+
+			else:
+				if event.key == pygame.K_a:
+					moving_left = True
+				if event.key == pygame.K_d:
+					moving_right = True
+				if event.key == pygame.K_SPACE:
+					shoot = True
+				if event.key == pygame.K_q:
+					grenade = True
+				if event.key == pygame.K_w and player.alive:
+					player.jump = True
+					jump_fx.play()
+				if event.key == pygame.K_ESCAPE:
+					run = False
 
 
 		#keyboard button released
